@@ -14,7 +14,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -26,7 +26,7 @@ class CounterData(BaseModel):
 @app.post("/counter")
 async def counter(counter_data: CounterData):
     
-    display = 20
+    display = 40
     response_counter = await print_counters(counter_data.query, counter_data.opinion, display=display)
 
     return {"query": counter_data.query, "opinion": counter_data.opinion, "response": response_counter}

@@ -34,13 +34,12 @@ async def search_articles(query: str, display: int = 10):
         items.append({
             "title": i['title'],
             "link": i['link'],
-            "description": i['description'],
-            "pubDate": i['pubDate']
+            "originallink": i['originallink'],
         })
 
     return items
 
-async def read_article_link(link: str):
+async def read_article_link(title: str, link: str, original_link: str = "Unknown"):
     """Read the article at a given LINK"""
     response = await fetch(link)
 
@@ -48,10 +47,9 @@ async def read_article_link(link: str):
 
     soup = bs4.BeautifulSoup(original_content, "html.parser")
 
-    title = soup.find("h2", {"id": "title_area"}).get_text()
     text = soup.find("article", {"id": "dic_area"}).get_text()
 
-    return {"title": title.strip(), "snippet": text.strip()}
+    return {"title": title.strip() + "<출처 링크: " + original_link + ">", "snippet": text.strip()}
 
 async def print_counters(query: str, opinion: str, display: int = 10):
     articles = await search_articles(query=query, display=display)
@@ -60,17 +58,17 @@ async def print_counters(query: str, opinion: str, display: int = 10):
         if not article['link']:
             continue
         try:
-            response_article = await read_article_link(article['link'])
+            response_article = await read_article_link(article['title'], article['link'], article['originallink'])
         except:
             continue
         documents.append(response_article)
 
 
-    message = await co.chat(model="command-r-plus", message=f'다음 의견에 대해 근거와 함께 반박해: "{opinion}"', documents=documents)
+    message = await co.chat(model="command-r-plus", message=f'다음 의견에 대해 뉴스 기사를 이용한 근거와 함께 반박해: "{opinion}". 그리고 네 반박의 근거로 사용된 기사들의 출처를 밝혀줘. 출처를 밝힐 때는 출처 링크를 같이 덧붙여줘. 명심해, "너의 반박"에 "사용된" 기사들의 출처들만 추가해야 해. 너의 반박과 상관 없는 기사는 추가하지 마. 만약 너의 반박의 근거로 사용된 기사가 없다면 출처를 추가하지 않아도 좋아.', documents=documents)
 
     print('주제: "'+ query + '"\n사용자 의견: "' + opinion + '"\n반박: ' + message.text)
-    return message.text
+    return message.text.strip()
 
 
 # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-# asyncio.run(print_counters(query="코로나 백신", opinion="코로나 백신은 효과가 전혀 없을 뿐더러 그저 제약회사들의 수익창출 수단에 불과해.", display=20))
+# asyncio.run(print_counters(query="코로나 백신", opinion="코로나 백신은 효과가 전혀 없을 뿐더러 그저 제약회사들의 수익창출 수단에 불과해.", display=50))
