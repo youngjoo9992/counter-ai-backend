@@ -70,5 +70,5 @@ async def print_counters(query: str, opinion: str, display: int = 10):
     return message.text.strip()
 
 
-asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-asyncio.run(print_counters(query="코로나 백신", opinion="코로나 백신은 효과가 전혀 없을 뿐더러 그저 제약회사들의 수익창출 수단에 불과해.", display=50))
+# asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+# asyncio.run(print_counters(query="코로나 백신", opinion="코로나 백신은 효과가 전혀 없을 뿐더러 그저 제약회사들의 수익창출 수단에 불과해.", display=50))
