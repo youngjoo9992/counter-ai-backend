@@ -64,7 +64,7 @@ async def print_counters(query: str, opinion: str, display: int = 10):
         documents.append(response_article)
 
 
-    message = await co.chat(model="command-r-plus", message=f'다음 의견에 대해 뉴스 기사를 이용한 근거와 함께 반박해: "{opinion}". 그리고 네 반박의 근거로 사용된 기사들의 출처를 밝혀줘. 출처를 밝힐 때는 출처 링크를 같이 덧붙여줘. 출처를 쓸 때는 줄바꿈을 해서 너의 반박과 분리시켜서 써줘. 명심해, "너의 반박"에 "사용된" 기사들의 출처들만 추가해야 해. 너의 반박과 상관 없는 기사는 추가하지 마. 만약 너의 반박의 근거로 사용된 기사가 없다면 출처를 추가하지 않아도 좋아.', documents=documents)
+    message = await co.chat(model="command-r-plus", message=f'다음 의견에 대해 뉴스 기사를 이용한 근거와 함께 반박해: "{opinion}"', documents=documents)
 
     print('주제: "'+ query + '"\n사용자 의견: "' + opinion + '"\n반박: ' + message.text)
     return message.text.strip()
